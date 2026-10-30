@@ -1,0 +1,32 @@
+# Monthly refresh of Kafila's offline mosque data (OpenStreetMap).
+name: Mosque data
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['tool/**', '.github/workflows/mosques.yml']
+permissions:
+  contents: write
+concurrency:
+  group: mosque-data
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download mosques from OpenStreetMap
+        run: python3 tool/generate.py --out mosques --max-minutes 300
+      - name: Commit
+        run: |
+          git config user.name kafila-bot
+          git config user.email kafila-bot@users.noreply.github.com
+          git add mosques tool/done.json
+          git diff --cached --quiet && exit 0
+          git commit -m "Update mosque data (OpenStreetMap)"
+          git pull --rebase origin main
+          git push origin HEAD:main
+          curl -s "https://purge.jsdelivr.net/gh/${{ github.repository }}@main/mosques/index.json" > /dev/null || true
