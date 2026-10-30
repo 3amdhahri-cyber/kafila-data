@@ -30,3 +30,8 @@ jobs:
           git pull --rebase origin main
           git push origin HEAD:main
           curl -s "https://purge.jsdelivr.net/gh/${{ github.repository }}@main/mosques/index.json" > /dev/null || true
+      - name: Check that the app can download (jsDelivr)
+        run: |
+          sleep 20
+          curl -sf "https://cdn.jsdelivr.net/gh/${{ github.repository }}@main/mosques/index.json" | head -c 300; echo
+          curl -sf -o /dev/null -w "DE.json: %{http_code} %{size_download} bytes\n" "https://cdn.jsdelivr.net/gh/${{ github.repository }}@main/mosques/DE.json"
