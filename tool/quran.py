@@ -14,7 +14,7 @@ API = 'https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1'
 TANZIL = ('https://tanzil.net/pub/download/index.php?marks=true&sajdah=true&rub=false&tatweel=false'
           '&quranType=uthmani&outType=txt-2&agree=true')
 LANGS = {  # app language -> (fawazahmed0 language name, preferred edition name parts)
-    'en': ('English', ['sahih', 'pickthall', 'yusufali']),
+    'en': ('English', ['yusufaliorig', 'pickthall', 'yusufali']),
     'de': ('German', ['bubenheim', 'aburida', 'rassoul']),
     'fr': ('French', ['hamidullah', 'hamidul']),
     'tr': ('Turkish', ['diyanet', 'yazir']),
@@ -74,7 +74,7 @@ def main():
     translations = {}
     editions = json.loads(get(f'{API}/editions.json'))
     for lang, (lname, prefs) in LANGS.items():
-        cands = [e for e in editions.values() if e['language'] == lname
+        cands = [e for e in editions.values() if e['language'].startswith(lname)
                  and not e['name'].endswith(('-la', '-lad')) and e.get('direction', 'ltr') == 'ltr']
         if not cands:
             print(lang, 'no edition'); continue
