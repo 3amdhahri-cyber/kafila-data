@@ -1,0 +1,25 @@
+name: Quran data
+on:
+  push:
+    branches: [main]
+    paths: ['tool/quran.py', '.github/workflows/quran.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: quran-data
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 tool/quran.py quran
+      - run: |
+          git config user.name kafila-bot
+          git config user.email kafila-bot@users.noreply.github.com
+          git add quran
+          git diff --cached --quiet && exit 0
+          git commit -m "Quran data"
+          git pull --rebase origin main
+          git push origin HEAD:main
+          curl -s "https://purge.jsdelivr.net/gh/${{ github.repository }}@main/quran/index.json" > /dev/null || true
