@@ -40,6 +40,10 @@ COUNTRIES = PRIORITY + [c for c in REST if c not in PRIORITY]
 def overpass(cc):
     q = (f'[out:json][timeout:600];area["ISO3166-1"="{cc}"][admin_level=2]->.a;'
          'nwr["amenity"="place_of_worship"]["religion"="muslim"](area.a);out center tags;')
+    return _run(q)
+
+
+def _run(q):
     body = urllib.parse.urlencode({'data': q}).encode()
     last = None
     for attempt in range(4):
@@ -59,6 +63,30 @@ def overpass(cc):
             time.sleep(5)
         time.sleep(30 * (attempt + 1))
     raise RuntimeError(last)
+
+
+def overpass_stops(cc):
+    q = (f'[out:json][timeout:600];area["ISO3166-1"="{cc}"][admin_level=2]->.a;'
+         'nwr["highway"~"^(services|rest_area)$"](area.a);out center tags;')
+    return _run(q)
+
+
+def compact_stops(elements):
+    rows, seen = [], set()
+    for e in elements:
+        lat = e.get('lat', (e.get('center') or {}).get('lat'))
+        lon = e.get('lon', (e.get('center') or {}).get('lon'))
+        if lat is None or lon is None:
+            continue
+        key = (round(lat * 200), round(lon * 200))  # ~500 m
+        if key in seen:
+            continue
+        seen.add(key)
+        t = e.get('tags', {})
+        pr = 1 if (t.get('prayer_room') in ('yes', 'muslim') or t.get('amenity') == 'prayer_room'
+                   or 'prayer' in (t.get('description', '') + t.get('note', '')).lower()) else 0
+        rows.append([round(lat, 5), round(lon, 5), t.get('name') or '', pr])
+    return rows
 
 
 def compact(elements):
@@ -139,6 +167,26 @@ def main():
         done[cc] = int(time.time()) - ((REFRESH_DAYS - 2) * 86400 if tiny else 0)
         json.dump(done, open(DONE, 'w'), indent=0, sort_keys=True)
         print(f'{cc}: {len(rows)} mosques in {time.time() - t0:.0f}s')
+    # Motorway service and rest areas (route mode), same refresh rule.
+    sdir = os.path.join(CDIR, 'stops')
+    os.makedirs(sdir, exist_ok=True)
+    sdone_path = os.path.join(ROOT, 'done_stops.json')
+    sdone = json.load(open(sdone_path)) if os.path.exists(sdone_path) else {}
+    for cc in COUNTRIES:
+        if cc not in done or now - sdone.get(cc, 0) < REFRESH_DAYS * 86400:
+            continue
+        if time.time() - start > max_min * 60:
+            break
+        try:
+            rows = compact_stops(overpass_stops(cc))
+        except Exception as e:  # noqa
+            print(f'{cc} stops: FAILED {e}')
+            continue
+        json.dump(rows, open(os.path.join(sdir, cc + '.json'), 'w', encoding='utf-8'),
+                  ensure_ascii=False, separators=(',', ':'))
+        sdone[cc] = int(time.time())
+        json.dump(sdone, open(sdone_path, 'w'), indent=0, sort_keys=True)
+        print(f'{cc}: {len(rows)} rest areas')
     build_index()
     missing = [c for c in COUNTRIES if c not in done]
     print(f'countries done: {len(done)}/{len(COUNTRIES)}; missing: {" ".join(missing)}')
