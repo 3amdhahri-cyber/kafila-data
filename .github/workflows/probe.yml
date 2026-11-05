@@ -1,0 +1,26 @@
+name: Sources probe
+on:
+  push:
+    branches: [sources-probe]
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          mkdir -p probe && cd probe
+          for r in rn0x/Adhkar-json rn0x/hisn_almuslim_json nawafalqari/azkar-api osamayy/azkar-db; do
+            d=$(echo $r | tr / _)
+            git clone -q --depth 1 https://github.com/$r $d || continue
+            rm -rf $d/.git
+            find $d -type f \( -name '*.mp3' -o -name '*.png' -o -name '*.jpg' -o -name '*.sqlite' -o -name '*.db' \) -delete
+            find $d -type f -size +3M -delete
+          done
+          find . -type f | head -100 > ../probe_files.txt
+      - run: |
+          git config user.name kafila-bot
+          git config user.email kafila-bot@users.noreply.github.com
+          git add probe probe_files.txt
+          git commit -qm "probe" && git push origin HEAD:sources-probe
