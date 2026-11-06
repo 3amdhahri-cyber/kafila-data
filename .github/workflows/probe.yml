@@ -10,14 +10,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          rm -rf probe; mkdir -p assets2 && cd assets2
-          git clone -q --depth 1 --filter=blob:none --sparse https://github.com/microsoft/fluentui-emoji fe
-          cd fe
-          git sparse-checkout set "assets/Kaaba/3D" "assets/Green book/3D" "assets/Palms up together/Default/3D" "assets/Prayer beads/3D" "assets/Mosque/3D" "assets/Compass/3D" "assets/Crescent moon/3D" "assets/Calendar/3D"
-          cp LICENSE ../FLUENT_LICENSE
-          find assets -name '*.png' -exec cp {} .. \;
-          cd .. && rm -rf fe
-          curl -sL -o ne_110m_land.geojson https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_land.geojson
+          cd assets2
+          curl -sL -o ne_110m_admin0.geojson https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson
           ls -la
       - run: |
           git config user.name kafila-bot
