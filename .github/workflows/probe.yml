@@ -10,17 +10,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          mkdir -p probe && cd probe
-          for r in rn0x/Adhkar-json rn0x/hisn_almuslim_json nawafalqari/azkar-api osamayy/azkar-db; do
-            d=$(echo $r | tr / _)
-            git clone -q --depth 1 https://github.com/$r $d || continue
-            rm -rf $d/.git
-            find $d -type f \( -name '*.mp3' -o -name '*.png' -o -name '*.jpg' -o -name '*.sqlite' -o -name '*.db' \) -delete
-            find $d -type f -size +3M -delete
-          done
-          find . -type f | head -100 > ../probe_files.txt
+          rm -rf probe; mkdir -p assets2 && cd assets2
+          git clone -q --depth 1 --filter=blob:none --sparse https://github.com/microsoft/fluentui-emoji fe
+          cd fe
+          git sparse-checkout set "assets/Kaaba/3D" "assets/Green book/3D" "assets/Palms up together/Default/3D" "assets/Prayer beads/3D" "assets/Mosque/3D" "assets/Compass/3D" "assets/Crescent moon/3D" "assets/Calendar/3D"
+          cp LICENSE ../FLUENT_LICENSE
+          find assets -name '*.png' -exec cp {} .. \;
+          cd .. && rm -rf fe
+          curl -sL -o ne_110m_land.geojson https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_land.geojson
+          ls -la
       - run: |
           git config user.name kafila-bot
           git config user.email kafila-bot@users.noreply.github.com
-          git add probe probe_files.txt
-          git commit -qm "probe" && git push origin HEAD:sources-probe
+          git add assets2
+          git commit -qm "assets probe" && git push origin HEAD:sources-probe
