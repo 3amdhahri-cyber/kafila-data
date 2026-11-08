@@ -10,11 +10,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          cd assets2
-          curl -sL -o ne_110m_admin0.geojson https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson
-          ls -la
+          mkdir -p audio && cd audio
+          curl -sL -A "Mozilla/5.0" "https://qurancomplex.gov.sa/en/?p=3979" -o page.html || true
+          grep -oE 'https?://[^"'"'"' ]+\.(mp3|zip)' page.html | sort -u | head -200 > links.txt || true
+          grep -oE 'href="[^"]*(audio|sound|recit|quran)[^"]*"' page.html | sort -u | head -100 > hrefs.txt || true
+          wc -c page.html; wc -l links.txt hrefs.txt
       - run: |
           git config user.name kafila-bot
           git config user.email kafila-bot@users.noreply.github.com
-          git add assets2
+          git add audio
           git commit -qm "assets probe" && git push origin HEAD:sources-probe
