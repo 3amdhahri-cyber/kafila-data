@@ -10,11 +10,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          mkdir -p audio && cd audio
-          curl -sL -A "Mozilla/5.0" "https://qurancomplex.gov.sa/en/?p=3979" -o page.html || true
-          grep -oE 'https?://[^"'"'"' ]+\.(mp3|zip)' page.html | sort -u | head -200 > links.txt || true
-          grep -oE 'href="[^"]*(audio|sound|recit|quran)[^"]*"' page.html | sort -u | head -100 > hrefs.txt || true
-          wc -c page.html; wc -l links.txt hrefs.txt
+          mkdir -p audio
+          for r in ar.alafasy ar.abdulbasitmurattal ar.husary ar.minshawi ar.mahermuaiqly ar.abdurrahmaansudais ar.saoodshuraym ar.hudhaify ar.muhammadayyoub ar.ahmedajamy; do
+            for b in 192 128 64 48 32; do
+              c=$(curl -s -o /dev/null -w "%{http_code}" -I "https://cdn.islamic.network/quran/audio/$b/$r/262.mp3")
+              echo "$r $b $c" >> audio/bitrates.txt
+            done
+          done
+          curl -sL "https://api.alquran.cloud/v1/edition/format/audio" -o audio/editions.json || true
+          cat audio/bitrates.txt
       - run: |
           git config user.name kafila-bot
           git config user.email kafila-bot@users.noreply.github.com
