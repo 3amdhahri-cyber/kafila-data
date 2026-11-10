@@ -22,6 +22,9 @@ LANGS = {  # app language -> (fawazahmed0 language name, preferred edition name 
     'ru': ('Russian', ['kuliev', 'porokhova']),
     'zh': ('Chinese', ['majian', 'jian']),
     'vi': ('Vietnamese', ['hassan', 'rowwad']),
+    'ur': ('Urdu', ['jalandhry', 'junagarhi', 'maududi']),
+    'ms': ('Malay', ['basmeih', 'abdullahmuhammadbasmeih']),
+    'bn': ('Bengali', ['muhiuddinkhan', 'zohurulhoque', 'taisirulquran']),
 }
 
 
