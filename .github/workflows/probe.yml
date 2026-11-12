@@ -11,14 +11,13 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           mkdir -p audio
-          for r in ar.alafasy ar.abdulbasitmurattal ar.husary ar.minshawi ar.mahermuaiqly ar.abdurrahmaansudais ar.saoodshuraym ar.hudhaify ar.muhammadayyoub ar.ahmedajamy; do
-            for b in 192 128 64 48 32; do
-              c=$(curl -s -o /dev/null -w "%{http_code}" -I "https://cdn.islamic.network/quran/audio/$b/$r/262.mp3")
-              echo "$r $b $c" >> audio/bitrates.txt
-            done
+          for q in "k%C3%B6ln" "koln" "Euskirchen"; do
+            echo "== $q" >> audio/photon.txt
+            curl -s -o /tmp/p.json -w "%{http_code} %{time_total}\n" -A "Kafila prayer app" "https://photon.komoot.io/api/?q=$q&limit=7&lang=de&lat=50.661&lon=6.787" >> audio/photon.txt
+            head -c 600 /tmp/p.json >> audio/photon.txt; echo >> audio/photon.txt
           done
-          curl -sL "https://api.alquran.cloud/v1/edition/format/audio" -o audio/editions.json || true
-          cat audio/bitrates.txt
+          curl -sI -A "Kafila prayer app" "https://photon.komoot.io/api/?q=koln" | head -20 >> audio/photon.txt
+          cat audio/photon.txt
       - run: |
           git config user.name kafila-bot
           git config user.email kafila-bot@users.noreply.github.com
