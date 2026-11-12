@@ -1,0 +1,18 @@
+== k%C3%B6ln
+200 1.165489
+{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"osm_type":"R","osm_id":62578,"osm_key":"place","osm_value":"city","type":"city","name":"Köln","state":"Nordrhein-Westfalen","country":"Deutschland","countrycode":"DE","extra":{"admin_level":"6"},"extent":[6.7725303,51.0849743,7.162028,50.8304399]},"geometry":{"type":"Point","coordinates":[6.959974,50.938361]}},{"type":"Feature","properties":{"osm_type":"N","osm_id":2399559029,"osm_key":"railway","osm_value":"station","type":"house","housenumber":"11","name":"Köln Hauptbahnhof","street":"Trankgasse","locality":"Martinsvi
+== koln
+200 1.067598
+{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"osm_type":"R","osm_id":62578,"osm_key":"place","osm_value":"city","type":"city","name":"Köln","state":"Nordrhein-Westfalen","country":"Deutschland","countrycode":"DE","extra":{"admin_level":"6"},"extent":[6.7725303,51.0849743,7.162028,50.8304399]},"geometry":{"type":"Point","coordinates":[6.959974,50.938361]}},{"type":"Feature","properties":{"osm_type":"W","osm_id":4532022,"osm_key":"amenity","osm_value":"place_of_worship","type":"house","housenumber":"4","name":"Kölner Dom","street":"Domkloster","locality":"Andreasvier
+== Euskirchen
+200 1.412833
+{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"osm_type":"R","osm_id":1403657,"osm_key":"place","osm_value":"town","type":"city","name":"Euskirchen","county":"Kreis Euskirchen","state":"Nordrhein-Westfalen","country":"Deutschland","countrycode":"DE","extra":{"admin_level":"8"},"extent":[6.7104459,50.7029758,6.9349233,50.5605496]},"geometry":{"type":"Point","coordinates":[6.7871681,50.66129]}},{"type":"Feature","properties":{"osm_type":"N","osm_id":3047893978,"osm_key":"railway","osm_value":"station","type":"house","housenumber":"2a","name":"Euskirchen","street":"Ostst
+HTTP/1.1 200 OK
+Server: nginx
+Date: Thu, 12 Nov 2026 20:34:14 GMT
+Content-Type: application/json
+Content-Length: 0
+Connection: keep-alive
+Expires: Thu, 12 Nov 2026 21:34:14 GMT
+Cache-Control: max-age=3600
+
