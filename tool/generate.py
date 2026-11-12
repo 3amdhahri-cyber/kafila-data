@@ -120,6 +120,35 @@ def compact(elements):
     return out
 
 
+def overpass_places(cc):
+    q = (f'[out:json][timeout:600];area["ISO3166-1"="{cc}"][admin_level=2]->.a;'
+         'node["place"~"^(city|town|village|suburb|quarter)$"]["name"](area.a);out qt;')
+    return _run(q)
+
+
+PLACE_TYPES = {'city': 0, 'town': 1, 'village': 2, 'suburb': 3, 'quarter': 3}
+
+
+def compact_places(elements):
+    """Rows [lat, lon, name, type, other names joined by |] for offline place search."""
+    rows = []
+    for e in elements:
+        t = e.get('tags', {})
+        name = t.get('name')
+        if not name or 'lat' not in e:
+            continue
+        typ = PLACE_TYPES.get(t.get('place'), 2)
+        alts = []
+        if typ <= 1:
+            for k in ('name:en', 'name:de', 'name:fr', 'name:ar', 'name:tr', 'int_name'):
+                v = t.get(k)
+                if v and v != name and v not in alts:
+                    alts.append(v)
+        rows.append([round(e['lat'], 4), round(e['lon'], 4), name, typ, '|'.join(alts)])
+    rows.sort(key=lambda r: (r[3], r[2]))
+    return rows
+
+
 def build_index():
     countries = {}
     for f in sorted(os.listdir(CDIR)):
@@ -131,6 +160,9 @@ def build_index():
             continue
         countries[cc] = {'name': NAMES.get(cc, cc), 'n': len(rows),
                          'kb': max(1, round(os.path.getsize(os.path.join(CDIR, f)) / 1024))}
+        pf = os.path.join(CDIR, 'places', f)
+        if os.path.exists(pf):
+            countries[cc]['places_kb'] = max(1, round(os.path.getsize(pf) / 1024))
     with open(os.path.join(CDIR, 'index.json'), 'w', encoding='utf-8') as fh:
         json.dump({'v': 1, 'updated': time.strftime('%Y-%m-%d'), 'countries': countries}, fh,
                   ensure_ascii=False, separators=(',', ':'), sort_keys=True)
@@ -187,6 +219,26 @@ def main():
         sdone[cc] = int(time.time())
         json.dump(sdone, open(sdone_path, 'w'), indent=0, sort_keys=True)
         print(f'{cc}: {len(rows)} rest areas')
+    # Towns, villages and districts (offline place suggestions).
+    pdir = os.path.join(CDIR, 'places')
+    os.makedirs(pdir, exist_ok=True)
+    pdone_path = os.path.join(ROOT, 'done_places.json')
+    pdone = json.load(open(pdone_path)) if os.path.exists(pdone_path) else {}
+    for cc in COUNTRIES:
+        if cc not in done or now - pdone.get(cc, 0) < REFRESH_DAYS * 86400:
+            continue
+        if time.time() - start > max_min * 60:
+            break
+        try:
+            rows = compact_places(overpass_places(cc))
+        except Exception as e:  # noqa
+            print(f'{cc} places: FAILED {e}')
+            continue
+        json.dump(rows, open(os.path.join(pdir, cc + '.json'), 'w', encoding='utf-8'),
+                  ensure_ascii=False, separators=(',', ':'))
+        pdone[cc] = int(time.time())
+        json.dump(pdone, open(pdone_path, 'w'), indent=0, sort_keys=True)
+        print(f'{cc}: {len(rows)} places')
     build_index()
     missing = [c for c in COUNTRIES if c not in done]
     print(f'countries done: {len(done)}/{len(COUNTRIES)}; missing: {" ".join(missing)}')
