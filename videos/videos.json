@@ -1,0 +1,191 @@
+{
+ "v": 1,
+ "categories": [
+  {
+   "id": "prayer",
+   "title": {
+    "en": "Learn the prayer",
+    "fr": "Apprendre la prière",
+    "de": "Das Gebet lernen",
+    "ar": "تعلّم الصلاة"
+   },
+   "items": [
+    {
+     "id": "2ZEmsdEOpbk",
+     "t": "How to Pray Salah | Step by Step",
+     "lang": "en",
+     "by": "Majed Mahmoud"
+    },
+    {
+     "id": "57mvyD9Rk1U",
+     "t": "How to pray in Islam",
+     "lang": "en",
+     "by": "Iqbal Nasim"
+    },
+    {
+     "id": "4zr6tNgmKSI",
+     "t": "How do Muslims Pray? (All 5 prayers)",
+     "lang": "en"
+    },
+    {
+     "id": "y6MDQaYCFOc",
+     "t": "Apprendre la prière facilement",
+     "lang": "fr"
+    },
+    {
+     "id": "o-X_tTc3HX0",
+     "t": "Apprendre la prière aux enfants et aux débutants",
+     "lang": "fr"
+    },
+    {
+     "id": "qYHFemXv9dk",
+     "t": "Das Gebet im Islam – Erlerne das Gebet!",
+     "lang": "de",
+     "by": "Abdelhamid"
+    },
+    {
+     "id": "4IXEgiy74_0",
+     "t": "Das Gebet (Salah) für Kinder und Anfänger",
+     "lang": "de"
+    },
+    {
+     "id": "0uPE9BBERAc",
+     "t": "Das islamische Gebet erklärt (für Konvertiten)",
+     "lang": "de"
+    }
+   ]
+  },
+  {
+   "id": "kids",
+   "title": {
+    "en": "For children",
+    "fr": "Pour les enfants",
+    "de": "Für Kinder",
+    "ar": "للأطفال"
+   },
+   "items": [
+    {
+     "id": "GZdmj9aoJQ8",
+     "t": "How to Pray (Salah) with Amina",
+     "lang": "en"
+    },
+    {
+     "id": "jZwOvVJmH8o",
+     "t": "How to Pray (Salah) with Zain",
+     "lang": "en"
+    },
+    {
+     "id": "XG35X4fMmoc",
+     "t": "How to Make Wudu and Salah with Amina",
+     "lang": "en"
+    },
+    {
+     "id": "u6CBr6dJnik",
+     "t": "Comment faire la prière – pas à pas pour enfants",
+     "lang": "fr"
+    },
+    {
+     "id": "OdRuL5iIWZ8",
+     "t": "Comment faire les ablutions (petits musulmans)",
+     "lang": "fr"
+    }
+   ]
+  },
+  {
+   "id": "quran",
+   "title": {
+    "en": "Quran recitation",
+    "fr": "Récitation du Coran",
+    "de": "Koranrezitation",
+    "ar": "تلاوات"
+   },
+   "items": [
+    {
+     "id": "447cTORNjx0",
+     "t": "سورتا السجدة والإنسان – فجر الجمعة، المسجد الحرام",
+     "lang": "ar",
+     "by": "ماهر المعيقلي"
+    },
+    {
+     "id": "wbEzR4GdMCc",
+     "t": "تلاوة الفجر من المسجد الحرام",
+     "lang": "ar",
+     "by": "ماهر المعيقلي"
+    },
+    {
+     "id": "zMmOtd-PWw8",
+     "t": "صلاة المغرب من المسجد الحرام",
+     "lang": "ar",
+     "by": "ياسر الدوسري"
+    },
+    {
+     "id": "dCugxhBGfFI",
+     "t": "تلاوة الشيخ عبدالله الجهني",
+     "lang": "ar",
+     "by": "عبدالله الجهني"
+    }
+   ]
+  },
+  {
+   "id": "umrah",
+   "title": {
+    "en": "Umrah",
+    "fr": "Omra",
+    "de": "Umra",
+    "ar": "العمرة"
+   },
+   "items": [
+    {
+     "id": "jHyp1_QB04Y",
+     "t": "How to Perform Umrah – A Step by Step Visual Guide",
+     "lang": "en",
+     "by": "Sh. Abu Eesa"
+    },
+    {
+     "id": "z4OkHqu1KsA",
+     "t": "Complete Umrah Guide: Step by Step",
+     "lang": "en"
+    },
+    {
+     "id": "bhd4lO1YZdk",
+     "t": "Guide étape par étape pour accomplir la 'Umrah",
+     "lang": "fr"
+    },
+    {
+     "id": "sdg4Dfavr1o",
+     "t": "Comment faire la Omra étape par étape",
+     "lang": "fr"
+    }
+   ]
+  },
+  {
+   "id": "reminders",
+   "title": {
+    "en": "Reminders",
+    "fr": "Rappels",
+    "de": "Erinnerungen",
+    "ar": "مواعظ"
+   },
+   "items": [
+    {
+     "id": "vBvsWig-qWI",
+     "t": "The Beauty of Allah's Timing",
+     "lang": "en",
+     "by": "Dr. Omar Suleiman"
+    },
+    {
+     "id": "V7xrBDZ8Pyo",
+     "t": "The Master's Plan, Not the Master Plan",
+     "lang": "en",
+     "by": "Dr. Omar Suleiman"
+    },
+    {
+     "id": "ceX4Pt3mpJQ",
+     "t": "Sweetness of Faith | The Faith Revival",
+     "lang": "en",
+     "by": "Yaqeen Institute"
+    }
+   ]
+  }
+ ]
+}
