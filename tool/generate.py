@@ -149,6 +149,36 @@ def compact_places(elements):
     return rows
 
 
+def overpass_halal(cc):
+    q = (f'[out:json][timeout:600];area["ISO3166-1"="{cc}"][admin_level=2]->.a;'
+         '(nwr["diet:halal"~"^(yes|only)$"]["amenity"~"^(restaurant|fast_food|cafe|food_court)$"](area.a);'
+         'nwr["cuisine"~"halal"]["amenity"~"^(restaurant|fast_food|cafe)$"](area.a););out center tags;')
+    return _run(q)
+
+
+def compact_halal(elements):
+    """Rows [lat, lon, name, address, cuisine, only] (only = 1 when diet:halal=only)."""
+    rows, seen = [], set()
+    for e in elements:
+        lat = e.get('lat', (e.get('center') or {}).get('lat'))
+        lon = e.get('lon', (e.get('center') or {}).get('lon'))
+        if lat is None or lon is None:
+            continue
+        t = e.get('tags', {})
+        name = t.get('name') or t.get('name:en') or ''
+        if not name:
+            continue
+        key = (round(lat * 2000), round(lon * 2000), name.lower())  # ~50 m
+        if key in seen:
+            continue
+        seen.add(key)
+        street = ' '.join(x for x in [t.get('addr:street'), t.get('addr:housenumber')] if x)
+        addr = ', '.join(x for x in [street, t.get('addr:city')] if x)
+        cuisine = (t.get('cuisine') or '').replace('_', ' ').replace(';', ', ')[:40]
+        rows.append([round(lat, 5), round(lon, 5), name, addr, cuisine, 1 if t.get('diet:halal') == 'only' else 0])
+    return rows
+
+
 def build_index():
     countries = {}
     for f in sorted(os.listdir(CDIR)):
@@ -160,6 +190,9 @@ def build_index():
             continue
         countries[cc] = {'name': NAMES.get(cc, cc), 'n': len(rows),
                          'kb': max(1, round(os.path.getsize(os.path.join(CDIR, f)) / 1024))}
+        hf = os.path.join(CDIR, 'halal', f)
+        if os.path.exists(hf):
+            countries[cc]['halal_n'] = len(json.load(open(hf, encoding='utf-8')))
         pf = os.path.join(CDIR, 'places', f)
         if os.path.exists(pf):
             countries[cc]['places_kb'] = max(1, round(os.path.getsize(pf) / 1024))
@@ -239,6 +272,26 @@ def main():
         pdone[cc] = int(time.time())
         json.dump(pdone, open(pdone_path, 'w'), indent=0, sort_keys=True)
         print(f'{cc}: {len(rows)} places')
+    # Halal restaurants (same refresh rule).
+    hdir = os.path.join(CDIR, 'halal')
+    os.makedirs(hdir, exist_ok=True)
+    hdone_path = os.path.join(ROOT, 'done_halal.json')
+    hdone = json.load(open(hdone_path)) if os.path.exists(hdone_path) else {}
+    for cc in COUNTRIES:
+        if cc not in done or now - hdone.get(cc, 0) < REFRESH_DAYS * 86400:
+            continue
+        if time.time() - start > max_min * 60:
+            break
+        try:
+            rows = compact_halal(overpass_halal(cc))
+        except Exception as e:  # noqa
+            print(f'{cc} halal: FAILED {e}')
+            continue
+        json.dump(rows, open(os.path.join(hdir, cc + '.json'), 'w', encoding='utf-8'),
+                  ensure_ascii=False, separators=(',', ':'))
+        hdone[cc] = int(time.time())
+        json.dump(hdone, open(hdone_path, 'w'), indent=0, sort_keys=True)
+        print(f'{cc}: {len(rows)} halal restaurants')
     build_index()
     missing = [c for c in COUNTRIES if c not in done]
     print(f'countries done: {len(done)}/{len(COUNTRIES)}; missing: {" ".join(missing)}')
